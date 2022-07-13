@@ -356,7 +356,7 @@ def fetch_view_column_details(engine):
            column_name;
     """
     with engine.connect() as connection:
-        result = pd.read_sql(get_view_definition_sql, connection)
+        result = pd.read_sql(get_view_column_details_sql, connection)
     return result
 
 
