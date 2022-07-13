@@ -45,7 +45,7 @@ def main():
                 ofile.write("### USER NOTES:\n\n")
                 ofile.write(f"![[notes/{db}.{schema_name}.{table_name}.md]]\n\n")
                 ofile.write("### COLUMNS:\n")
-                ofile.write(markdown_table(tcd.loc[tcd_filter]))
+                ofile.write(markdown_table(tcd.loc[tcd_filter].drop(columns=['schema_name', 'table_name'])))
                 # Parents don't apply to tables
                 # ofile.write("### PARENTS:\n")
                 # if len(deps_df.loc[deps_parent_filter]) > 0:
@@ -54,7 +54,14 @@ def main():
                 #     ofile.write("No Parents\n")
                 ofile.write("### CHILDREN:\n")
                 if len(deps_df.loc[deps_child_filter]) > 0:
-                    ofile.write(markdown_table(deps_df.loc[deps_child_filter]))
+                    # Drop columns describing this view and create markdown table of children
+                    ofile.write(markdown_table( deps_df.loc[deps_child_filter].drop(
+                        columns=['referenced_server_name',
+                                 'referenced_db_name',
+                                 'referenced_schema_name',
+                                 'referenced_entity_name'
+                                 ]
+                    )))
                 else:
                     ofile.write("No Children\n")
 
@@ -83,15 +90,27 @@ def main():
                     ofile.write("### USER NOTES:\n\n")
                     ofile.write(f"![[notes/{db}.{schema_name}.{view_name}.md]]\n\n")
                     ofile.write("### COLUMNS:\n")
-                    ofile.write(markdown_table(vcd.loc[vcd_filter]))
+                    ofile.write(markdown_table(vcd.loc[vcd_filter].drop(columns=['schema_name', 'view_name'])))
                     ofile.write("### PARENTS:\n")
                     if len(deps_df.loc[deps_parent_filter]) > 0:
-                        ofile.write(markdown_table(deps_df.loc[deps_parent_filter]))
+                        ofile.write(markdown_table(deps_df.loc[deps_parent_filter].drop(
+                            columns=['DATABASE',
+                                     'referencing_schema_name',
+                                     'referencing_object_name',
+                                     'referencing_type_desc'
+                                     ]
+                    )))
                     else:
                         ofile.write("No Parents\n")
                     ofile.write("### CHILDREN:\n")
                     if len(deps_df.loc[deps_child_filter]) > 0:
-                        ofile.write(markdown_table(deps_df.loc[deps_child_filter]))
+                        ofile.write(markdown_table(deps_df.loc[deps_child_filter].drop(
+                        columns=['referenced_server_name',
+                                 'referenced_db_name',
+                                 'referenced_schema_name',
+                                 'referenced_entity_name'
+                                 ]
+                    )))
                     else:
                         ofile.write("No Children\n")
                     ofile.write("### DEFINITION:\n")
