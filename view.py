@@ -38,7 +38,7 @@ def main():
                                     (deps_df['referenced_schema_name'] == schema_name)
 
             # Now create the file with a fully qualified name for the view
-            with open(f"{outdir}{db}.{schema_name}.{table_name.replace("/),"")}.md", 'w') as ofile:
+            with open(f"{outdir}{db}.{schema_name}.{table_name.replace("/,"")}.md", 'w') as ofile:
                 ofile.write(f"## TABLE: {db}.{schema_name}.{table_name}\n")
                 ofile.write("### DETAILS:\n")
                 ofile.write(markdown_table(tab_dates.loc[tab_dates_filter]))
@@ -74,7 +74,7 @@ def main():
                                     (deps_df['referenced_db_name'].str.lower() == db.lower() )
 
                 # Now create the file with a fully qualified name for the view
-                with open(f"{outdir}{db}.{schema_name}.{view_name.replace("/),"")}.md", 'w') as ofile:
+                with open(f"{outdir}{db}.{schema_name}.{view_name.replace("/,"")}.md", 'w') as ofile:
                     ofile.write(f"## VIEW: {db}.{schema_name}.{view_name}\n")
                     ofile.write("### DETAILS:\n")
                     ofile.write(markdown_table(
