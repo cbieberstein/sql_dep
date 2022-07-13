@@ -90,7 +90,9 @@ def main():
                     ofile.write("### USER NOTES:\n\n")
                     ofile.write(f"![[notes/{db}.{schema_name}.{view_name}.md]]\n\n")
                     ofile.write("### COLUMNS:\n")
-                    ofile.write(markdown_table(vcd.loc[vcd_filter].drop(columns=['schema_name', 'view_name'])))
+                    ofile.write(markdown_table(vcd.loc[vcd_filter].drop(columns=['schema_name',
+                                                                                 'view_name',
+                                                                                 'data_type'])))
                     ofile.write("### PARENTS:\n")
                     if len(deps_df.loc[deps_parent_filter]) > 0:
                         ofile.write(markdown_table(deps_df.loc[deps_parent_filter].drop(
