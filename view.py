@@ -3,11 +3,13 @@ import sqlparse
 import re
 
 def main():
-    outdir = "./output/"
+    outdir = "./output"
 
     # Get all database names on this server
     engine = connect_sqlserver_windowsauth('bidatacentre', 'master')
     db_df = fetch_all_dbs(engine)
+    for db in list(db_df['name']):
+        os.mkdir(f"{outdir}/{db}")
 
     # Loop through all the DBs (fetch_all_dbs excludes:  master, model, msdb, tempdb)
     for db in list(db_df['name']):
@@ -24,6 +26,17 @@ def main():
         # Get all DB Dependencies
         deps_df = fetch_all_db_dependencies(engine)
 
+        # Create columns to use for obsidian links to parents / children
+        deps_df['ParentLink'] = '[[' + \
+                                deps_df['referenced_db_name'] + '.' +\
+                                deps_df['referenced_schema_name'] + '.' +\
+                                deps_df['referenced_entity_name'] + ']]'
+
+        deps_df['ChildLink'] = '[[' + \
+                               deps_df['DATABASE'] + '.' + \
+                               deps_df['referencing_schema_name'] + '.' + \
+                               deps_df['referencing_object_name'] + ']]'
+
         # Iterate through all tables in this database, generating a .md file for each
         for schema_name in list(tcd['schema_name'].unique()):
             for table_name in list(tcd['table_name'].unique()):
@@ -38,12 +51,12 @@ def main():
                                     (deps_df['referenced_schema_name'] == schema_name)
 
             # Now create the file with a fully qualified name for the view
-            with open(f"{outdir}{db}.{schema_name}.{table_name.replace('/','')}.md", 'w') as ofile:
+            with open(f"{outdir}/{db}/{db}.{schema_name}.{table_name.replace('/','')}.md", 'w') as ofile:
                 ofile.write(f"## TABLE: {db}.{schema_name}.{table_name}\n")
                 ofile.write("### DETAILS:\n")
                 ofile.write(markdown_table(tab_dates.loc[tab_dates_filter]))
                 ofile.write("### USER NOTES:\n\n")
-                ofile.write(f"![[notes/{db}.{schema_name}.{table_name}.md]]\n\n")
+                ofile.write(f"![[../notes/{db}.{schema_name}.{table_name}.notes.md]]\n\n")
                 ofile.write("### COLUMNS:\n")
                 ofile.write(markdown_table(tcd.loc[tcd_filter].drop(columns=['schema_name', 'table_name'])))
                 # Parents don't apply to tables
@@ -59,7 +72,8 @@ def main():
                         columns=['referenced_server_name',
                                  'referenced_db_name',
                                  'referenced_schema_name',
-                                 'referenced_entity_name'
+                                 'referenced_entity_name',
+                                 'ParentLink'
                                  ]
                     )))
                 else:
@@ -81,14 +95,14 @@ def main():
                                     (deps_df['referenced_db_name'].str.lower() == db.lower() )
 
                 # Now create the file with a fully qualified name for the view
-                with open(f"{outdir}{db}.{schema_name}.{view_name.replace('/','')}.md", 'w') as ofile:
+                with open(f"{outdir}/{db}/{db}.{schema_name}.{view_name.replace('/','')}.md", 'w') as ofile:
                     ofile.write(f"## VIEW: {db}.{schema_name}.{view_name}\n")
                     ofile.write("### DETAILS:\n")
                     ofile.write(markdown_table(
                             view_def.loc[view_def_filter][['created','last_modified','comments']]
                         ))
                     ofile.write("### USER NOTES:\n\n")
-                    ofile.write(f"![[notes/{db}.{schema_name}.{view_name}.md]]\n\n")
+                    ofile.write(f"![[notes/{db}.{schema_name}.{view_name}.notes.md]]\n\n")
                     ofile.write("### COLUMNS:\n")
                     ofile.write(markdown_table(vcd.loc[vcd_filter].drop(columns=['schema_name',
                                                                                  'view_name',
@@ -99,7 +113,8 @@ def main():
                             columns=['DATABASE',
                                      'referencing_schema_name',
                                      'referencing_object_name',
-                                     'referencing_type_desc'
+                                     'referencing_type_desc',
+                                     'ChildLink'
                                      ]
                     )))
                     else:
@@ -110,7 +125,8 @@ def main():
                         columns=['referenced_server_name',
                                  'referenced_db_name',
                                  'referenced_schema_name',
-                                 'referenced_entity_name'
+                                 'referenced_entity_name',
+                                 'ParentLink'
                                  ]
                     )))
                     else:
