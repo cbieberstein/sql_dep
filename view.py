@@ -42,8 +42,8 @@ def main():
                 ofile.write(f"## TABLE: {db}.{schema_name}.{table_name}\n")
                 ofile.write("### DETAILS:\n")
                 ofile.write(markdown_table(tab_dates.loc[tab_dates_filter]))
-                file.write("### USER NOTES:\n\n")
-                file.write(f"![[include/{db}/{schema_name}/{table_name}_user_notes.md]]\n\n")
+                ofile.write("### USER NOTES:\n\n")
+                ofile.write(f"![[include/{db}/{schema_name}/{table_name}_user_notes.md]]\n\n")
                 ofile.write("### COLUMNS:\n")
                 ofile.write(markdown_table(tcd.loc[tcd_filter]))
                 # Parents don't apply to tables
@@ -80,8 +80,8 @@ def main():
                     ofile.write(markdown_table(
                             view_def.loc[view_def_filter][['created','last_modified','comments']]
                         ))
-                    file.write("### USER NOTES:\n\n")
-                    file.write(f"![[include/{db}/{schema_name}/{view_name}_user_notes.md]]\n\n")
+                    ofile.write("### USER NOTES:\n\n")
+                    ofile.write(f"![[include/{db}/{schema_name}/{view_name}_user_notes.md]]\n\n")
                     ofile.write("### COLUMNS:\n")
                     ofile.write(markdown_table(vcd.loc[vcd_filter]))
                     ofile.write("### PARENTS:\n")
