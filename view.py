@@ -1,6 +1,7 @@
 from queries import *
 import sqlparse
 import re
+import os
 
 def main():
     outdir = "./output"
