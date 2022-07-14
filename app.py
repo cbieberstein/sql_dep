@@ -10,10 +10,11 @@ def main():
     engine = connect_sqlserver_windowsauth('bidatacentre', 'master')
     db_df = fetch_all_dbs(engine)
     for db in list(db_df['name']):
-        os.mkdir(f"{outdir}/{db}")
+        os.makedirs(f"{outdir}/{db}", exist_ok=True)
 
     # Loop through all the DBs (fetch_all_dbs excludes:  master, model, msdb, tempdb)
-    for db in list(db_df['name']):
+    #for db in list(db_df['name']):
+    for db in ['PRODUCTION_SERVICES']:
         engine = connect_sqlserver_windowsauth('bidatacentre',db)
 
         # Table Details
