@@ -128,4 +128,7 @@ dmypy.json
 # Pyre type checker
 .pyre/
 # Ignore MD file output
-/output/*.md
+/output/
+#
+/.idea/
+#
