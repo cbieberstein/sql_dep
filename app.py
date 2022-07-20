@@ -145,7 +145,6 @@ def output_view_md_file(view_cols_df, view_def_df, deps_df, db, schema_name, vie
         # Show SQL code for view definition in markdown ``` code block ```
         ofile.write(f"```\n{cleaned}\n```\n\n")
         ofile.write("\n\n")
-    # Done with View file output
 
 
 def output_table_md_file(tab_cols_df, tab_dates_df, deps_df, db, schema_name, table_name, outputdir):
@@ -216,7 +215,6 @@ def output_table_md_file(tab_cols_df, tab_dates_df, deps_df, db, schema_name, ta
                 )
             )
 
-    print("done")
 
 # ----------------------------------------------------------------------------
 if __name__ == "__main__":
